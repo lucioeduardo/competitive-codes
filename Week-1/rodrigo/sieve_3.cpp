@@ -1,3 +1,5 @@
+// http://codeforces.com/problemset/problem/17/A?locale=en
+
 #include <bits/stdc++.h>
 #define MAX 8000
 using namespace std;
