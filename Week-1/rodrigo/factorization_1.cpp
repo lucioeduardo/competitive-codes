@@ -1,3 +1,5 @@
+//https://www.spoj.com/problems/FACTCG2/
+
 #include <bits/stdc++.h>
 #define MAX 10000007
 
