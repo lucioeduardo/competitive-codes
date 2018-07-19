@@ -1,3 +1,5 @@
+//https://www.spoj.com/problems/AMR11E/
+
 #include <bits/stdc++.h>
 using namespace std;
 
