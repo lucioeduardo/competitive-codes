@@ -1,3 +1,5 @@
+//https://wiki.haskell.org/99_questions/Solutions/39
+
 #include <bits/stdc++.h>
 using namespace std;
 
