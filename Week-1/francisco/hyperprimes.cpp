@@ -1,62 +1,58 @@
 #include <stdio.h>
-#define SIZE 2000001
+#include <vector>
+#define MAX 2000001
 
-int prime[SIZE];
+using namespace std;
 
-int hyperPrime(int a){
-    int i = 0;
-    int expo = 0;
-    int mult = 1;
-    int f = prime[i];
+vector<int> prime;
+bool isPrime[MAX];
+int r[MAX];
+
+bool hyperPrime(int a){
+    int i = 0, expo = 0, mult = 1, f = prime[i];
 
     while(a != 1 && a >= f*f){
         while(a % f == 0){
             expo++;
             a /= f;
         }
+        if(expo > 0 && (a != 1 || !isPrime[expo+1])) return false;
         f=prime[++i];
         mult *= expo+1;
         expo = 0;
     }
-    if(a != 1) mult *= (++expo)+1;
 
-    return mult;
+    return true;
+}
+
+void sieve(){
+    int i, j, c = 0;
+
+    for(i = 2; i <= MAX; i++) isPrime[i] = true;
+
+    for(i = 2; i <= MAX; i++)
+        if(isPrime[i]){
+            r[i] = ++c;
+            prime.push_back(i);
+            if(i*1ll*i <= MAX)
+                for(j = i*i; j <= MAX; j += i)
+                    isPrime[j] = false;
+        } else{
+            if(hyperPrime(i))
+                r[i] = ++c;
+            else
+                r[i] = c;
+        }
 }
 
 int main(){
 
     int n;
 
+    sieve();
+
     while(scanf("%d", &n) != EOF){
-
-        int c = 0;
-        int p = 0;
-        int i;
-        int j;
-        bool isPrime[n+1];
-
-        for(i = 2; i <= n; i++) isPrime[i] = true;
-
-        for(i = 2; i <= n; i++)
-
-            if(isPrime[i]){
-
-                prime[p++] = i;
-                c++;
-
-                if(i* 1ll *i <= n)
-                
-                    for(j = i*i; j <= n; j += i)
-                        isPrime[j] = false;  
-
-            } else{
-
-                if(isPrime[hyperPrime(i)])
-                    c++;
-
-            }
-
-        printf("%d\n", c);
+        printf("%d\n", r[n]);
     }
 
     return 0;
