@@ -1,5 +1,5 @@
+// SPOJ - https://br.spoj.com/problems/IMPEDIDO/
 #include <cstdio>
-
 
 int main(){
 	int a,d;

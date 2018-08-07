@@ -1,3 +1,4 @@
+// SPOJ - https://br.spoj.com/problems/PALAVRMG/
 #include <iostream>
 using namespace std;
 
