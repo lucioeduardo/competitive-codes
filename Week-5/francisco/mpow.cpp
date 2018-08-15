@@ -2,6 +2,8 @@
 #define MAX 51
 #define M 1000000007
 
+int m;
+
 void identity(long long a[MAX][MAX]){
     for(int i = 0; i < MAX; i++)
         for(int j = 0; j < MAX; j++)
@@ -11,14 +13,14 @@ void identity(long long a[MAX][MAX]){
 void mmult(long long a[MAX][MAX], long long b[MAX][MAX]){
     long long temp[MAX][MAX];
 
-    for(int i = 0; i < MAX; i++)
-        for(int j = 0; j < MAX; j++){
+    for(int i = 0; i < m; i++)
+        for(int j = 0; j < m; j++){
             temp[i][j] = 0;
-            for(int k = 0; k < MAX; k++)
+            for(int k = 0; k < m; k++)
                 temp[i][j] = (temp[i][j] + ((a[i][k] * b[k][j])%M))%M;
         }
-    for(int i = 0; i < MAX; i++)
-        for(int j = 0; j < MAX; j++)
+    for(int i = 0; i < m; i++)
+        for(int j = 0; j < m; j++)
             a[i][j] = temp[i][j];
 }
 
@@ -35,7 +37,7 @@ void mexpo(long long res[MAX][MAX], long long a[MAX][MAX], int n){
 
 int main(){
 
-    int t, m, n, i, j;
+    int t, n, i, j;
     scanf("%d", &t);
 
     long long matrix[MAX][MAX];
