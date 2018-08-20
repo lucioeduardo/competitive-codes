@@ -1,0 +1,86 @@
+// https://www.spoj.com/problems/FIBOSUM/
+
+#include <bits/stdc++.h>
+#define M 1000000007
+#define ll long long 
+#define MAX 3
+using namespace std;
+
+ll ans[MAX][MAX];
+
+void indentity(ll a[][MAX]){
+    for(int i = 0; i < MAX; i++)
+        for(int j = 0; j <MAX; j++)
+            a[i][j] = (i==j);
+}
+
+void mult(ll a[][MAX], ll b[][MAX]){
+    ll c[MAX][MAX];
+
+    for(int i = 0; i < MAX; i++)
+        for(int j = 0; j < MAX; j++){
+            c[i][j] = 0;
+            for(int k = 0; k < MAX; k++){
+                c[i][j] = (c[i][j] + ((a[i][k] * b[k][j])%M))%M;    
+            }
+        }
+
+    for(int i = 0; i < MAX; i++)
+        for(int j = 0; j < MAX; j++)
+            a[i][j] = (c[i][j] % M);
+}
+
+void mexpo(int n){
+    indentity(ans);
+    ll a[][MAX] = {{2,0,M-1},{1,0,0},{0,1,0}};
+
+    while(n > 0){
+        if(n%2){
+            mult(ans, a);
+        }
+        mult(a, a);
+        n/=2;
+    }
+}
+
+int main(){
+    int t, n, m;
+    ll sn, sm;
+    scanf("%d", &t);
+
+    while(t--) {
+        
+        scanf("%d %d", &n, &m);
+
+        if(n > m)
+            swap(n,m);
+
+        mexpo(n-1);
+        sn = ans[1][0];
+
+        // for(int i = 0; i < MAX; i++){
+        //     for(int j = 0; j < MAX; j++)
+        //         printf("%lld ", ans[i][j]);
+        //     printf("\n");
+        // }
+        // printf("\n");
+        
+        mexpo(m);
+        sm = ans[1][0];
+
+
+        // for(int i = 0; i < MAX; i++){
+        //     for(int j = 0; j < MAX; j++)
+        //         printf("%lld ", ans[i][j]);
+        //     printf("\n");
+        // }
+        
+        // printf("===%lld %lld\n", sm, sn);
+        ll res = sm-sn;
+        if(res < 0) res = M+res;
+
+        printf("%lld\n", res%M);
+    }
+
+    return 0;
+}
