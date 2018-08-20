@@ -1,4 +1,4 @@
-// https://www.urionlinejudge.com.br/judge/pt/problems/view/1474
+// https://www.spoj.com/problems/MPOW/
 
 #include <bits/stdc++.h>
 #define MOD 1000000
@@ -6,7 +6,7 @@
 #define ll unsigned long long
 using namespace std;
 
-ll ans[MAX][MAX], curr[MAX][MAX];
+ll ans[MAX][MAX], curr[MAX][MAX], m[MAX][MAX];
 ll n, k, l;
 
 void mult(ll a[MAX][MAX], ll b[MAX][MAX]) {
@@ -31,29 +31,6 @@ void fast_exp(ll a[MAX][MAX], ll e) {
 	}
 }
 
-ll factorial(ll x) {
-	ll answer = x;
-
-	while(--x)
-		answer = (answer * x) %MOD;
-
-	return answer;
-}
-
-ll mod_pow(ll b, ll e) {
-	ll answer = 1LL;
-
-	while(e) {
-		if(e&1)
-			answer = (answer * b) % MOD;
-
-		b = (b*b) % MOD;
-		e >>= 1LL;
-	}
-
-	return answer;
-}
-
 int main()
 {
 	while(scanf("%llu %llu %llu", &n, &k, &l) != EOF) {
@@ -63,20 +40,17 @@ int main()
 		ans[0][0] = ans[1][1] = 1;
 		ans[1][0] = ans[0][1] = 0;
 
-		ll m[MAX][MAX] = {{0,1}, {l,k}};
+		m[0][0] = 0; m[0][1] = 1;
+		m[1][0] = l; m[1][1] = k;
 
-		fast_exp(m, n/5 -1);
-
-		m[0][0] = 1; m[0][1] = 0;
-		m[1][0] = k; m[1][1] = 0;
-
-		mult(ans, m);
+		fast_exp(m, n/5);
 
 		// for(int i=0; i<MAX; ++i) {
-		// 	for(int j=0; j<MAX; ++j)	
+		// 	for(int j=0; j<MAX; ++j)
 		// 		printf("%llu ", ans[i][j]);
 		// 	printf("\n");
 		// }
-		printf("%06lld\n", ans[1][0]);
+
+		printf("%06lld\n", ans[1][1]);
 	}
 }
