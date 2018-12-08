@@ -1,0 +1,13 @@
+lista = [1,2,3,4,1,4,5]
+n = 11
+lista_modulos = [0]*n
+
+for valor in lista:
+	if valor < n:
+		lista_modulos[valor] = lista_modulos[valor] + 1
+	if (valor != (n - valor) and lista_modulos[valor] and lista_modulos[n - 
+	valor]) or (valor == n - valor and lista_modulos[valor] > 1):
+		print("Números encontrados {0}, {1}".format(valor, n - valor))
+		break
+else:
+	print("Nenhum número encontrado") 
