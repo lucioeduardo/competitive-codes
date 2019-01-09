@@ -1,24 +1,25 @@
 #include <bits/stdc++.h>
-#define value first
-#define change second
 #define MAXN (1 << 10) * 1001
 using namespace std;
 
+typedef struct {
+	int value, change;
+} segment;
+
+segment st[4 * MAXN];
+
 char warrior[MAXN];
-pair<int, int> st[3 * MAXN];
 
 void build(int node, int L, int R)
 {
 	if(L ^ R) {
-		int mid = (L + R) / 2;
-		int l = 2 * node;
-		int r = 2 * node + 1;
+		int mid = (L + R) >> 1;
 
-		build(l, L, mid);
-		build(r, mid + 1, R);
+		build(node << 1, L, mid);
+		build(node << 1 | 1, mid + 1, R);
 
-		st[node].value = st[l].value + st[r].value;
-		st[node].change = 2;
+		st[node].value = st[node << 1].value + st[node << 1 | 1].value;
+		st[node].change = 2; // indicates updated
 
 	} else {
 		st[node].value = warrior[L] - '0';
@@ -26,84 +27,69 @@ void build(int node, int L, int R)
 	}
 }
 
-void check(int node, int change) {
-	if(change == -1 && st[node].change == -1)
-		change = 2;
-	st[node].change = change;
+void check(int node, int change)
+{
+	if(change == -1 and st[node].change != 2)
+		st[node].change = 1 - st[node].change;
+	else
+		st[node].change = change;
 }
 
-void calc(int node, int size, int change)
+void calc(int node, int size)
 {
+	int change = st[node].change;
+
 	if(change == 0)
 		st[node].value = 0;
 	else if(change == 1)
 		st[node].value = size;
 	else if(change == -1)
 		st[node].value = size - st[node].value;
-
-	if(size > 1){
-		check(2 * node, change);
-		check(2 * node + 1, change);
+	
+	if(change != 2) {
+		check(node << 1, change);
+		check(node << 1 | 1, change);
 	}
 
 	st[node].change = 2;
 }
 
+
 void update(int node, int L, int R, int i, int j, int change)
 {
-	if(L > j || R < i)
+	if(L >= i and R <= j)
+		check(node, change);
+
+	calc(node, R - L + 1);
+
+	if(L > j or R < i or (L >= i and R <= j))
 		return;
 
-	if(L == R) {
-		check(node, change);
-		calc(node, 1, st[node].change);
+	int mid = (L + R) >> 1;
 
-	} else {
+	update(node << 1, L, mid, i, j, change);
+	update(node << 1 | 1, mid + 1, R, i, j, change);
 
-		int mid = (L + R) / 2;
-		int l = 2 * node;
-		int r = 2 * node + 1;
-
-		build(l, L, mid);
-		build(r, mid + 1, R);
-
-		if(L >= i && R <= j) {
-			check(node, change);
-			calc(node, (R - L) + 1, change);
-		}
-	}
+	st[node].value = st[node << 1].value + st[node << 1 | 1].value;
 }
 
-pair<int, int> query(int node, int L, int R, int i, int j)
+int query(int node, int L, int R, int i, int j)
 {
-	if(i > R || j < L)
-		return {0, 2};
+	calc(node, R - L + 1);
 
-	if(L >= i && R <= j) {
-		if(st[node].change != 2)
-			calc(node, (R - L) + 1, st[node].change);
-		return st[node];
+	if(i > R or j < L)
+		return 0;
 
-	} else {
+	if(L >= i and R <= j)
+		return st[node].value;
 
-		int mid = (L + R) / 2;
-		int l = 2 * node;
-		int r = 2 * node + 1;
+	int mid = (L + R) >> 1;
 
-		if(st[node].change != 2)
-			calc(node, (R - L) + 1, st[node].change);
+	int l = query(node << 1, L, mid, i, j);
+	int r = query(node << 1 | 1, mid + 1, R, i, j);
 
-		auto lside = query(l, L, mid, i, j);
-		auto rside = query(r, mid + 1, R, i, j);
-
-		if(lside.change != 2)
-			calc(l, (mid - L)  + 1, lside.change);
-		if(rside.change != 2)
-			calc(r, (R - (mid+1))  + 1, rside.change);
-
-		return {lside.value + rside.value, 2};
-	}
-
+	st[node].value = st[node << 1].value + st[node << 1 | 1].value; 
+	return l + r;
 }
 
 int main()
@@ -112,10 +98,8 @@ int main()
 
 	for(int i=1; i<=t; ++i)
 	{
-		int N = 1;
+		int N = 0;
 		int n; scanf("%d ", &n);
-
-		strcpy(warrior, "0");
 
 		while(n--)
 		{
@@ -128,29 +112,27 @@ int main()
 			}
 		}
 
-		int q; scanf("%d ", &q);
-
-		build(1, 1, --N);
-
 		printf("Case %d:\n", i);
+		
+		int q; scanf("%d ", &q);
 		int Q = 0;
+		build(1, 0, --N);
 
 		while(q--)
 		{
 			char op; int x, y;
 			scanf("%c %d %d ", &op, &x, &y);
-			++x, ++y;
 
 			if(op == 'F')
-				update(1, 1, N, x, y, 1);
+				update(1, 0, N, x, y, 1);
 			else if(op == 'E')
-				update(1, 1, N, x, y, 0);
+				update(1, 0, N, x, y, 0);
 			else if(op == 'I')
-				update(1, 1, N, x, y, -1);
+				update(1, 0, N, x, y, -1);
 			else
-				printf("Q%d: %d\n", ++Q, query(1, 1, N, x, y).value);
+				printf("Q%d: %d\n", ++Q, query(1, 0, N, x, y));
 			
 		}
 	}
 	return 0;
-} 
+}
