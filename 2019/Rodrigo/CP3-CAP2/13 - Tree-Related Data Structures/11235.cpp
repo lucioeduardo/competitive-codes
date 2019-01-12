@@ -1,104 +1,86 @@
-/* tentando encontrar o erro */
-
 #include <bits/stdc++.h>
 using namespace std;
 
 typedef struct {
-	int start;
-	int end;
+	int left, right;
+	int rmq;
 } nodetype;
 
 int v[100010];
 nodetype st[3 * 100010];
 
-int freq(nodetype nt) {
-	return nt.end - nt.start;
-}
-
 void build(int node, int L, int R)
 {
 	if(L ^ R) {
-		int mid = (L + R) / 2;
-		int l = 2 * node;
-		int r = 2 * node + 1;
-
-		build(l, L, mid);
+		int mid = (L + R) >> 1;
+		int l = node << 1;
+		int r = l + 1;
+		
+		build(l, L, mid);	
 		build(r, mid + 1, R);
 
-		nodetype a = st[2 * node];
-		nodetype b = st[2 * node + 1];
+		st[node].left = st[l].left;
+		st[node].right= st[r].right;
 
-		int A = v[a.start];
-		int B = v[b.start];
+		if(v[mid + 1] == v[L])
+			st[node].left += st[r].left;
+		if(v[mid] == v[R])
+			st[node].right += st[l].right;
 
-		if(A == B)
-			st[node].start = a.start, st[node].end = b.end;
-		else {
-			auto p1 = upper_bound(v + a.end, v + b.start, A);
-			auto p2 = lower_bound(v + a.end, v + b.start, B);
+		int current = 0;
 
-			int pos_a =(p1 - 1) - v;
-			int pos_b = p2 - v;
-
-			if((b.end - pos_b) < (pos_a - a.start))
-				st[node].start = a.start, st[node].end = pos_a;
-			else
-				st[node].start = pos_b, st[node].end = b.end;
-		}
-
-		// printf("{%d %d : %d}\n", L, R,	 1 + freq(st[node]));
-
+		if(v[mid] == v[mid + 1])
+			current = st[l].right + st[r].left;
+		st[node].rmq = max(current, max(st[l].rmq, st[r].rmq));
 	} else {
-		st[node].start = L;
-		st[node].end   = R;
+		st[node].left = st[node].right = st[node].rmq = 1;
 	}
 }
 
-pair<int, int> query(int node, int L, int R, int i, int j)
+nodetype query(int node, int L, int R, int i, int j)
 {
-	if(L > j || R < i) return {-1, -1};
-	if(L >=i && R <=j) return {st[node].start, st[node].end};
+	
+	if(L > j || R < i) return {0, 0, 0};
+	if(L >=i && R <=j) return st[node];
 
-	int mid = (L+R) / 2;
+	int mid = (L + R) >> 1;
+	int l = node << 1;
+	int r = l + 1;
 
-	auto l = query(2 * node, L, mid, i, j);
-	auto r = query(2 * node + 1, mid+1, R, i, j);
+	auto lside = query(l, L, mid, i, j);
+	auto rside = query(r, mid+1, R, i, j);
+	auto current = nodetype();
 
-	if(l.first == -1)
-		return r;
-	if(r.first == -1)
-		return l;
-	if(v[l.first] == v[r.first])
-		return {l.first, r.second};
+	current.left  = lside.left;
+	current.right = rside.right;
 
-	auto p1 = upper_bound(v + l.second, v + r.first, v[l.first]);
-	auto p2 = lower_bound(v + l.second, v + r.first,     v[r.first]);
+	if(v[mid + 1] == v[L])
+		current.left += rside.left;
+	if(v[mid] == v[R])
+		current.right += lside.right;
+	
+	current.rmq = 0;
+	if(v[mid] == v[mid+1])
+		current.rmq = lside.right + rside.left;
 
-	int pos_a = (p1 - 1) - v;
-	int pos_b = p2 - v;
-
-	if((r.second - pos_b) < (pos_a - l.first))
-		return {l.first, pos_a};
-	else
-		return {pos_b, r.second};
+	current.rmq = max(current.rmq ,max(lside.rmq, rside.rmq));
+	return current;
 }
 
 int main()
-{	
-	int N, q;
-	while(scanf("%d %d", &N, &q) == 2)
+{
+	int N, Q;
+	while(scanf("%d %d", &N, &Q) == 2)
 	{
 		for(int i=1; i<=N; ++i)
 			scanf("%d", v + i);
-		
+
 		build(1, 1, N);
 
-		while(q--) {
-			int i,j;
-			cin >> i >> j;
-
-			auto answer = query(1, 1, N, i, j);
-			cout << 1 + (answer.second - answer.first) << endl;;
+		while(Q--) {
+			int i, j;
+			scanf("%d %d", &i, &j);
+			printf("%d\n", query(1, 1, N, i, j).rmq);
 		}
 	}
 
