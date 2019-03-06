@@ -1,9 +1,8 @@
 #include <bits/stdc++.h>
-#define MAXN 10000
 
 using namespace std;
 
-long long s, p, x, y, cont, r, c;
+long long s, p, x, y, c, k, cont;
 
 int main(){
 	
@@ -14,30 +13,51 @@ int main(){
 		if(s == 0 && p == 0) break;
 
         x=y=(s/2)+1;
-        cont = 0, r=1, c=1;
-        for(long long k=1; k<=s*s; k++){
-
-            if(k == p){
-                printf("Line = %lld, column = %lld.\n", x, y);
-                break;
-            }
-
-            if(cont%4 == 0) x+=1;
-            else if(cont%4 == 1) y-=1;
-            else if(cont%4 == 2) x-=1;
-            else if(cont%4 == 3) y+=1;
-
-            if((k%r) == 0){
-                cont++;
-                c++;
-            }
-
-            if(c==2){
-                r++;
-                c=0;
-            }
-		
+        
+        c=1;
+        while(true){
+            if(c*c >= p) break;
+            c+=2;
+            x++;
+            y++;
         }
+
+        k = c-1;
+        cont = (c*c)-p;
+        
+        if(k <= cont){
+            y-=k;
+            cont-=k;
+        }else{
+            y-=cont;
+            cont=0;
+        }
+
+        if(k <= cont){
+            x-=k;
+            cont-=k;
+        }else{
+            x-=cont;
+            cont=0;
+        }
+
+        if(k <= cont){
+            y+=k;
+            cont-=k;
+        }else{
+            y+=cont;
+            cont=0;
+        }
+
+        if(k <= cont){
+            x+=k;
+            cont-=k;
+        }else{
+            x+=cont;
+            cont=0;
+        }
+        
+        printf("Line = %lld, column = %lld.\n", y, x);
 	
 	}
 
