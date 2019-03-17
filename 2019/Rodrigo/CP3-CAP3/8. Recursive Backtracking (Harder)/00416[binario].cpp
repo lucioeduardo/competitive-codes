@@ -43,10 +43,8 @@ int main() {
         for(int i=0; i<n; ++i) {
             cin >> d;
 
-            for(int j=0; j<7; ++j) {
-                if(d[j] == 'Y') d[j] = '1';
-                else d[j] = '0';
-            }
+            for(int j=0; j<7; ++j)
+                d[j] = d[j] == 'Y' ? '1' : '0';
 
             display[i] = bit7(d).to_ulong();
         }
