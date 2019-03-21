@@ -4,7 +4,6 @@ using namespace std;
 int n, m;
 
 bitset<105> black;
-bitset<105> seen;
 bitset<105> color;
 vector<int> graph[105];
 
