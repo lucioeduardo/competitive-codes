@@ -21,13 +21,12 @@ void solve(int u) {
     bool canBlack = true;
 
     for(auto &e: graph[u]) {
-        if(seen[e] && color[e]) {
+        if(color[e]) {
             canBlack = false;
             break;
         }
     }
-
-    seen.set(u);
+    
     solve(u + 1);
 
     if(canBlack) {
@@ -35,8 +34,6 @@ void solve(int u) {
         solve(u + 1);
         color[u] = 0;
     }
-
-    seen.reset(u);
 }
 
 int main() {
