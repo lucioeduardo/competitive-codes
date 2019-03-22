@@ -4,7 +4,6 @@ using namespace std;
 int n, m;
 
 bitset<105> black;
-bitset<105> seen;
 bitset<105> color;
 vector<int> graph[105];
 
@@ -21,13 +20,12 @@ void solve(int u) {
     bool canBlack = true;
 
     for(auto &e: graph[u]) {
-        if(seen[e] && color[e]) {
+        if(color[e]) {
             canBlack = false;
             break;
         }
     }
-
-    seen.set(u);
+    
     solve(u + 1);
 
     if(canBlack) {
@@ -35,8 +33,6 @@ void solve(int u) {
         solve(u + 1);
         color[u] = 0;
     }
-
-    seen.reset(u);
 }
 
 int main() {
