@@ -28,8 +28,8 @@ int main() {
                 for(int j=answer; (q0+j) < m && (i+j) < n && g[i+j][q0+j] <= u; ++j)
                     answer = j+1;
             }
-
             printf("%d\n", answer);
+            
         }
         printf("-\n");
     }
