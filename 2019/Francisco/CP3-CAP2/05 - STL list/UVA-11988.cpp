@@ -5,6 +5,7 @@ using namespace std;
 
 int main(){
 
+    int cont;
     bool flag;
     char str[MAXN];
     list<char> result;
@@ -13,15 +14,19 @@ int main(){
         flag = false;
 
         for(int i = 0; i < strlen(str); i++){
-            if(str[i] == '[') flag = true;
+            if(str[i] == '[') {
+                flag = true;
+                cont = 0;
+            }
             else if(str[i] == ']') flag = false;
 
             if(str[i] != '[' && str[i] != ']'){
                 if(flag){
-                    result.push_front(str[i]);
-                } else {
-                    result.push_back(str[i]);
+                    list<char>::iterator it = result.begin();
+                    advance(it, cont++);
+                    result.insert(it, str[i]);
                 }
+                else result.push_back(str[i]);
             }
         }
 
@@ -32,8 +37,6 @@ int main(){
 
         result.clear();
     }
-
-
 
     return 0;
 }
