@@ -6,17 +6,17 @@ using namespace std;
 
 struct segtree{
   int size;
-  vector<ll> sums;
+  vector<ll> tree;
 
   void init(int n){
     size = 1;
     while(size < n) size *= 2;
-    sums.assign(2*size, 0LL);
+    tree.assign(2*size, 0LL);
   }
 
   void build(vector<int>&v, int x, int l, int r){
     if(r - l  == 1){
-      if(l < v.size()) sums[x] = v[l];
+      if(l < v.size()) tree[x] = v[l];
       return;
     }
 
@@ -27,7 +27,7 @@ struct segtree{
     build(v,left,l,m);
     build(v,right,m,r);
 
-    sums[x] = sums[left] + sums[right];
+    tree[x] = tree[left] + tree[right];
   }
 
   void build(vector<int>& v){
@@ -36,7 +36,7 @@ struct segtree{
 
   void set(int i, int x, int v, int l , int r){
     if(r - l  == 1){
-      sums[x] = v;
+      tree[x] = v;
       return;
     }
 
@@ -49,7 +49,7 @@ struct segtree{
       set(i,right,v,m,r);
     }
 
-    sums[x] = sums[left] + sums[right];
+    tree[x] = tree[left] + tree[right];
   }
 
   void set(int i, int v){
@@ -58,7 +58,7 @@ struct segtree{
 
   ll sum(int a, int b, int x, int l, int r){
     if(l >= a && r <= b)
-      return sums[x];
+      return tree[x];
 
     if(r <= a || l >= b)
       return 0;
